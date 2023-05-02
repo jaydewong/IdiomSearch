@@ -26,5 +26,6 @@ def main():
         test = input("test input: ")
 
     print("Program stopped. "); 
+
 if __name__ == '__main__':
     main()

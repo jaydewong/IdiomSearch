@@ -14,4 +14,6 @@ If you run into an issue pushing to git because a stream wasn't closed cleanly,
 try git config http.postBuffer 524288000 and push again. 
 
 Notes: 
-Our python program ends when we don't supply input and we have leaked objects to clean up
+- BridgeException occurs since py file isn't returning anything to JS, as we're 
+staying in a while loop. Need to fix, but if we call py file once for each word 
+we search up, we have to initialize Idiomatcher every time and it takes too long
