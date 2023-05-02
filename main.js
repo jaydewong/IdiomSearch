@@ -11,7 +11,7 @@
 import { python } from "pythonia"; 
 
 //access python idiomatch file 
-const searchResult = await python("./main-elizabeth.py"); 
+const searchResult = await python("./main.py");
 //print out result of calling function - runs idiomatch 
 console.log(await searchResult.main()); 
 python.exit(); 

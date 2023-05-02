@@ -15,12 +15,15 @@ from idiomatch import Idiomatcher
 run_setup = False
 
 def setup():
+    global run_setup
+    global nlp
+    global idiomatcher
     nlp = spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
     idiomatcher = Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
     run_setup = True
 
 def main():
-    if (not run_setup) :
+    if (not run_setup):
         setup()
 
     # this always times out on us
