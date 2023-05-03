@@ -7,11 +7,20 @@
 //     return "This is an idiom";
 // }
 // exports.idiom_detect = idiom_detect;
-
 import { python } from "pythonia"; 
 
 //access python idiomatch file 
 const searchResult = await python("./main.py");
-//print out result of calling function - runs idiomatch 
-console.log(await searchResult.main()); 
+
+const userInput = ["this guys is balls out insane", "there will be blood on your hands", "on the fence"]; 
+
+for(let i = 0; i < userInput.length; i++){
+    if(i === 0){
+        //set up the database
+        console.log(await searchResult.setup()); 
+        console.log("setup complete"); 
+    }
+    console.log(await searchResult.is_idiom(userInput[i]));
+}
+
 python.exit(); 

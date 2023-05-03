@@ -21,19 +21,18 @@ def setup():
     nlp = spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
     idiomatcher = Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
     run_setup = True
+    return run_setup
+
+def is_idiom(input):
+
+
+    doc = nlp(input) # process the sentence with an nlp pipeline
+    return idiomatcher.identify(doc)
+
 
 def main():
     if (not run_setup):
         setup()
-
-    # this always times out on us
-    test = input("test input (enter 'stop' to exit): ")
-
-    while (test != "stop"):
-        print(test)
-        doc = nlp(test)  # process the sentence with an nlp pipeline
-        print(idiomatcher.identify(doc))  # identify the idiom in the sentence
-        test = input("test input (enter 'stop' to exit): ")
 
     print("Program stopped. "); 
 
