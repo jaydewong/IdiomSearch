@@ -9,18 +9,35 @@
 // exports.idiom_detect = idiom_detect;
 import { python } from "pythonia"; 
 
+/**NOTES
+ * 
+ * this parsing only works if idiomatcher returns one matched idiom. i think it might be 
+ * better to move the parsing into python and make it proper JSON format before returning it to this JS file
+ * 
+ * */
+
+
+
 //access python idiomatch file 
 const searchResult = await python("./main.py");
 
-const userInput = ["this guys is balls out insane"]; 
+//ISSUE - matches to multiple idioms??
+//const userInput = ["you're gonna have blood on your hands if you do this"]; 
+//{"idiom": "have someone going", "span": ""re gon na have", "meta": "18378485065316437412, 1, 5"}, {"idiom": "have someone going", "span": "you "re gon na have", "meta": "18378485065316437412, 0, 5"}, {"idiom": "have blood on one"s hands", "span": "have blood on your hands", "meta": "5930902300252675198, 4, 9"}, {"idiom": "on one"s hands", "span": "on your hands", "meta": "8246625119345375174, 6, 9"}
 
+const userInput = ["fence"]; //current implementation only works if idiomatcher matches it to ONE idiom, not multiple 
+
+//FOR EACH OF THE USER INPUTS
 for(let i = 0; i < userInput.length; i++){
+
+    //SET UP DATABASE
     if(i === 0){
         //set up the database
         console.log(await searchResult.setup()); 
         console.log("setup complete"); 
     }
 
+    //CALL PYTHON API 
     const result = async () => {
         const isIdiom = await searchResult.is_idiom(userInput[i]); 
       
@@ -28,26 +45,25 @@ for(let i = 0; i < userInput.length; i++){
     }
 
     let readResult = await result(); 
-    readResult.replaceAll('\'', '"')
-    //[{'idiom': 'balls-out', 'span': 'balls out', 'meta': (2876800142358111704, 3, 5)}]
+    console.log(typeof readResult); 
 
-    let resultJSON = JSON.parse(JSON.stringify(readResult));  //turn it into JSON format
-    console.log(resultJSON.idiom); 
+    //PARSE IDIOMATCH DATA - ASSUMING WE RECEIVE A STRING 
+    if(readResult != "[]"){
+        readResult = readResult.replace(/'/g, '"').replace(/\(/g, '"').replace(/\)/g, '"'); 
+        readResult = readResult.substring(1, readResult.length-1); 
+
+        console.log(readResult); 
+
+        let parsedResult = JSON.parse(readResult);
+        console.log(parsedResult.idiom); 
 
 
-    //readResult = readResult.replace("\"'idiom'\":", "\"idiom\":");
-    // const parsedResult = JSON.parse(readResult);
-    // console.log(parsedResult.idiom); 
-    //console.log();
 
+    }else{
+        console.log("idiom not identified"); 
+        //add some kind of break here?
+    }
 
-    //if the input is an idiom
-    // if(result != null){
-    //     let idiom = await result(); 
-    //     console.log(idiom[0]); 
-    // }else{
-    //     console.log("not an idiom");
-    // }
 }
 
 

@@ -25,9 +25,9 @@ def setup():
 
 def is_idiom(input):
 
-
     doc = nlp(input) # process the sentence with an nlp pipeline
-    return idiomatcher.identify(doc)
+
+    return str(idiomatcher.identify(doc))
 
 
 def main():
