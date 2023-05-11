@@ -19,15 +19,13 @@ def build():
 
     # pandas attempt
     df = pd.read_json(url, orient="records", lines=True)
-    print(df.head())
+    # print(df.head())
     print(df.iloc[0])
-    print(df["word"])
+    # print(df["word"])
 
 def search(query):
     print(df[df["word"] == query])
 
-var = "jayde's vscode pls get it together"
-print(var)
 
 """
 # byte -> str -> list attempt
