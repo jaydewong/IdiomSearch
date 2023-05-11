@@ -1,11 +1,14 @@
 # IdiomSearch
 
-Main-Jayde: testing using typescript and python together 
+main.js: testing using typescript and python together; process user input to extract idiom
+main.py: idiomatch setup and user input
+build_database.py: pull json file of idiom definitions and convert to Pandas dataframe
 
 Install Typescript: npm i typescript --save-dev
 Install JSPyBridge: npm install pythonia
 Install Idiomatch: pip3 install idiomatch
 Install Spacey: python3 -m spacy download en_core_web_sm
+Install Pandas: pip3 install pandas
 
 Compile TS: npm run compile 
 Run Single JS file: node main-jayde.js

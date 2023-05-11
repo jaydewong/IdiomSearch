@@ -28,6 +28,7 @@ def search(query):
 
 # senses: examples, synonyms, and glosses (definition)
 # extract into new column
+# rain cats and dogs -> rain dogs and cats
 
 """
 # byte -> str -> list attempt
