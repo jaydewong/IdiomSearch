@@ -19,6 +19,11 @@ def build():
 
     # pandas attempt
     df = pd.read_json(url, orient="records", lines=True)
+
+    # synonyms
+    synonyms = df["senses"].notna().extract(r'"synonyms": (\[\{.+\}\])')
+    df["synonyms"].fillna(value=, inplace=True)
+
     print("Build complete")
     # print(df.head())
     # print(df.iloc[0])
@@ -31,7 +36,8 @@ def search(query):
     print(matches.iloc[0])
     # print(df[df["word"] == query])
 
-# senses: examples, synonyms, and glosses (definition)
+
+# senses: examples, synonyms, and glosses (definition); recursive search for synonyms?
 # extract into new column
 # rain cats and dogs -> rain dogs and cats
 
@@ -60,3 +66,5 @@ print(data_json)
 if __name__ == '__main__':
     build()
     search("rain cats and dogs")
+    print(df["synonyms"].dropna())
+    print(df.loc[10])
