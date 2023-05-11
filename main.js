@@ -21,19 +21,28 @@ import { python } from "pythonia";
 //access python idiomatch file 
 const searchResult = await python("./main.py");
 
+//access python pandas database
+const buildDatabase = await python("./build_database.py");
+
 //ISSUE - matches to multiple idioms??
 //const userInput = ["you're gonna have blood on your hands if you do this"]; 
 //{"idiom": "have someone going", "span": ""re gon na have", "meta": "18378485065316437412, 1, 5"}, {"idiom": "have someone going", "span": "you "re gon na have", "meta": "18378485065316437412, 0, 5"}, {"idiom": "have blood on one"s hands", "span": "have blood on your hands", "meta": "5930902300252675198, 4, 9"}, {"idiom": "on one"s hands", "span": "on your hands", "meta": "8246625119345375174, 6, 9"}
 
-const userInput = ["fence"]; //current implementation only works if idiomatcher matches it to ONE idiom, not multiple 
+const userInput = ["on the fence"]; //current implementation only works if idiomatcher matches it to ONE idiom, not multiple 
 
 //FOR EACH OF THE USER INPUTS
 for(let i = 0; i < userInput.length; i++){
 
     //SET UP DATABASE
     if(i === 0){
-        //set up the database
+        //NOTE: get these two setups to run at the same time 
+
+        //set up the idiomatcher database
         console.log(await searchResult.setup()); 
+
+        //set up the pandas database 
+        console.log(await buildDatabase.build()); 
+
         console.log("setup complete"); 
     }
 
@@ -55,7 +64,11 @@ for(let i = 0; i < userInput.length; i++){
         console.log(readResult); 
 
         let parsedResult = JSON.parse(readResult);
-        console.log(parsedResult.idiom); 
+        console.log(parsedResult.idiom)
+
+        //SEARCH DATABASE FOR WORD 
+        console.log("Searching pandas for matching idiom..."); 
+        console.log(await buildDatabase.search(parsedResult.idiom)); 
 
 
 
