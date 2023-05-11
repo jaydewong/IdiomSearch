@@ -26,6 +26,8 @@ def build():
 def search(query):
     print(df[df["word"] == query])
 
+# senses: examples, synonyms, and glosses (definition)
+# extract into new column
 
 """
 # byte -> str -> list attempt
