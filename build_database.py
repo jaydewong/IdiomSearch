@@ -19,7 +19,7 @@ def build():
 
     # pandas attempt
     df = pd.read_json(url, orient="records", lines=True)
-    print("Build complete")
+    print("Database Build complete")
     # print(df.head())
     # print(df.iloc[0])
     # print(df["word"])
