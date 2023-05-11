@@ -12,7 +12,7 @@ import { python } from "pythonia";
 //access python idiomatch file 
 const searchResult = await python("./main.py");
 
-const userInput = ["this guys is balls out insane", "there will be blood on your hands", "on the fence"]; 
+const userInput = ["this guy is balls out insane", "there will be blood on your hands", "on the fence"]; 
 
 for(let i = 0; i < userInput.length; i++){
     if(i === 0){

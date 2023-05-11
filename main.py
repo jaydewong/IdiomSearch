@@ -34,6 +34,12 @@ def main():
     if (not run_setup):
         setup()
 
+    test = input("test input (enter 'stop' to exit): ")
+    while (test != "stop"):
+        processed = nlp(test)
+        print(idiomatcher.identify(processed))
+        test = input("test input (enter 'stop' to exit): ")
+
     print("Program stopped. "); 
 
 if __name__ == '__main__':
