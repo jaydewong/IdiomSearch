@@ -15,8 +15,11 @@ print(type(response))           # 'http.client.HTTPResponse'
 
 # pandas attempt
 df = pd.read_json(url, orient="records", lines=True)
+print(df.head())
 print(df.iloc[0])
 print(df["word"])
+
+print(df[df["word"] == "rain cats and dogs"])
 
 """
 # byte -> str -> list attempt
@@ -27,14 +30,12 @@ str_data = str(raw_data)      # convert bytes to str
 print("\\\\n")
 data_list = str_data.split('{"pos":')
 print(len(data_list))
-"""
 
 data = []
 with response.read() as f:
     for line in f:
         print(line)
 
-"""
 # store JSON response from url in data
 data_json = json.loads(response.read())
 
