@@ -20,11 +20,18 @@ def build():
     # pandas attempt
     df = pd.read_json(url, orient="records", lines=True)
     # print(df.head())
-    print(df.iloc[0])
+    # print(df.iloc[0])
     # print(df["word"])
 
 def search(query):
-    print(df[df["word"] == query])
+    print(query)
+    matches = df[df["word"].str.contains(query)]
+    print(matches)
+    print(matches.iloc[0])
+    # print(df[df["word"] == query])
+
+build()
+search("on the fence")
 
 # senses: examples, synonyms, and glosses (definition)
 # extract into new column
