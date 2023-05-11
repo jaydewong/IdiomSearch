@@ -8,18 +8,26 @@ import json
 # store the URL in url as parameter for urlopen
 url = "https://kaikki.org/dictionary/English/tag/tagged-idiomatic/kaikki_dot_org-dictionary-English-tagged-idiomatic.json"
 
-# store response of URL
-response = urlopen(url)
-print(type(response))           # 'http.client.HTTPResponse'
+
+def build():
+    global df
+
+    # store response of URL
+    response = urlopen(url)
+    print(type(response))           # 'http.client.HTTPResponse'
 
 
-# pandas attempt
-df = pd.read_json(url, orient="records", lines=True)
-print(df.head())
-print(df.iloc[0])
-print(df["word"])
+    # pandas attempt
+    df = pd.read_json(url, orient="records", lines=True)
+    print(df.head())
+    print(df.iloc[0])
+    print(df["word"])
 
-print(df[df["word"] == "rain cats and dogs"])
+def search(query):
+    print(df[df["word"] == query])
+
+var = "jayde's vscode pls get it together"
+print(var)
 
 """
 # byte -> str -> list attempt
