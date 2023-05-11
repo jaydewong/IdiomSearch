@@ -30,9 +30,6 @@ def search(query):
     print(matches.iloc[0])
     # print(df[df["word"] == query])
 
-build()
-search("on the fence")
-
 # senses: examples, synonyms, and glosses (definition)
 # extract into new column
 # rain cats and dogs -> rain dogs and cats
