@@ -9,7 +9,7 @@ import json
 url = "https://kaikki.org/dictionary/English/tag/tagged-idiomatic/kaikki_dot_org-dictionary-English-tagged-idiomatic.json"
 
 
-def build():
+def buildDatabase():
     global df
 
     # store response of URL
@@ -24,12 +24,33 @@ def build():
     # print(df.iloc[0])
     # print(df["word"])
 
-def search(query):
-    print(query)
-    matches = df[df["word"].str.contains(query)]
-    print(matches)
-    print(matches.iloc[0])
-    # print(df[df["word"] == query])
+def searchDatabase(query):
+    #query is currently a list of dictionaries formatted as a JSON string
+
+    #load a list of queries to check in Pandas
+    query = json.loads(query)
+    queryDf = [item['idiom'] for item in query]
+    
+    print(queryDf)
+
+    #Check queries in Pandas database 
+    #For each query in queryDf
+    for q in queryDf: 
+        #Check if any column words in Pandas database match the query 
+        possibleMatch = df[df["word"].str.contains(q)]
+        #possibleMatch is type <class 'pandas.core.frame.DataFrame'>
+
+        if possibleMatch.empty == True:
+            continue
+        else: 
+            print(possibleMatch)
+
+            #return the column of parts of speech of that matched idiom
+            print(type(possibleMatch.senses))
+            return possibleMatch.pos 
+            
+            #return possibleMatch.senses[4] #tried accessing glosses 
+            #print(possibleMatch.iloc[0].pos)
 
 # senses: examples, synonyms, and glosses (definition)
 # extract into new column

@@ -8,14 +8,15 @@ terminal text input
 idiomatch search and return output
 """
 
+import json
 import sys
 import spacy
 import threading
 from idiomatch import Idiomatcher
-from build_database import build
-from build_database import search
+from build_database import buildDatabase
+from build_database import searchDatabase
 from build_idiomatcher import buildIdiomatcher
-from build_idiomatcher import matchIdiom
+from build_idiomatcher import matchIdiom 
 
 run_setup = False
 
@@ -25,8 +26,8 @@ def setup():
     global nlp
     global idiomatcher
 
-    t1 = threading.Thread(target=setupIdiomatcher)
-    t2 = threading.Thread(target=setupDatabase)
+    t1 = threading.Thread(target=buildIdiomatcher)
+    t2 = threading.Thread(target=buildDatabase)
 
     t1.start()
     t2.start()
@@ -37,40 +38,36 @@ def setup():
     print("Setup Complete")
     run_setup = True
 
-def setupIdiomatcher():
+#Match the idiom to the given input from JS file
+def searchInputInDatabase(input):
 
-    buildIdiomatcher(); 
-    # global nlp 
-    # global idiomatcher 
+    #get and parse an Idiomatcher match if it exists 
+    idiomList = matchIdiom(input)
+    print("The list of idioms is: " + idiomList)
     
-    # nlp= spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
-    # idiomatcher= Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
-
-def is_idiom(input):
-    
-    return matchIdiom(input)
-
-#PANDAS
-def setupDatabase():
-    build(); 
-
-#Search Pandas database 
-def searchDatabase(query):
-    search(query)
+    #search idiomList in Pandas database - currently returns part of speech
+    print("Printing examples of matched idioms...")
+    result = searchDatabase(idiomList)
+    print(result)
 
 
 def main():
+    global nlp 
+
     if (not run_setup):
         setup()
 
     test = input("test input (enter 'stop' to exit): ")
     while (test != "stop"):
-        processed = nlp(test)
-        print(idiomatcher.identify(processed))
+        #print(matchIdiom(test))
+        print(searchInputInDatabase(test))
+        #print(idiomatcher.identify(processed))
+        #searchInputInDatabase(idiomatcher.identify(processed))
+
         test = input("test input (enter 'stop' to exit): ")
 
     print("Program stopped. "); 
 
 if __name__ == '__main__':
     setup()
-    main()
+    main() 

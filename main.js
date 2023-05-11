@@ -34,34 +34,11 @@ for(let i = 0; i < userInput.length; i++){
         console.log(await pythonMain.setup()); 
     }
 
-    //CALL PYTHON - CHECK IF INPUT IS AN IDIOM
-    const result = async () => {
-        const isIdiom = await pythonMain.is_idiom(userInput[i]); 
-      
-        return isIdiom; 
-    }
-
-    //get idiomatcher to return the function 
-    let readResult = await result(); 
-    console.log(typeof readResult); 
-
-    //i think this part can be condensed into just python but i'll do it here for now
-    if(readResult.length == 0){
-        console.log("idiom not identified"); 
-        break; 
-    }else {
-
-        //later thread this so it works faster 
-        for(let j = 0; j < readResult.length; j++){
-
-            console.log(readResult[j]); 
-            let parsedResult = JSON.parse(readResult[j]);
-            console.log(parsedResult.idiom);  
-        }
-    }
-
-
+    //get idiom result back from Idiomatcher
+    let result = await pythonMain.searchInputInDatabase(userInput[i]);
     
+    //this result is the part of speech of the idiom, not the definition. edit in build_database -> searchDatabase
+    console.log(result)
 
     //readResult may be a string containing multiple JSON Object 
     /** 
