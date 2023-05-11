@@ -25,12 +25,13 @@ def buildDatabase():
     # print(df["word"])
 
 def searchDatabase(query):
-    #query is currently a list of dictionaries formatted as a JSON string
+    #query as input is a list of dictionaries formatted as a JSON string
 
-    #load a list of queries to check in Pandas
+    #Load a list of queries to check in Pandas
     query = json.loads(query)
     queryDf = [item['idiom'] for item in query]
     
+    #Print the list of found matched idioms from Idiomatcher
     print(queryDf)
 
     #Check queries in Pandas database 

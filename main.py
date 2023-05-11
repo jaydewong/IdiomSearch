@@ -48,9 +48,9 @@ def searchInputInDatabase(input):
     #search idiomList in Pandas database - currently returns part of speech
     print("Printing examples of matched idioms...")
     result = searchDatabase(idiomList)
-    print(result)
+    return result
 
-
+#Testing functions with console input 
 def main():
     global nlp 
 

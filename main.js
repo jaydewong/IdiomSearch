@@ -9,61 +9,26 @@
 // exports.idiom_detect = idiom_detect;
 import { python } from "pythonia"; 
 
-/**NOTES
- * 
- * this parsing only works if idiomatcher returns one matched idiom. i think it might be 
- * better to move the parsing into python and make it proper JSON format before returning it to this JS file
- * 
- * */
 
 //access main python file 
 const pythonMain = await python("./main.py");
 
-//ISSUE - matches to multiple idioms??
-//const userInput = ["you're gonna have blood on your hands if you do this"]; 
-//{"idiom": "have someone going", "span": ""re gon na have", "meta": "18378485065316437412, 1, 5"}, {"idiom": "have someone going", "span": "you "re gon na have", "meta": "18378485065316437412, 0, 5"}, {"idiom": "have blood on one"s hands", "span": "have blood on your hands", "meta": "5930902300252675198, 4, 9"}, {"idiom": "on one"s hands", "span": "on your hands", "meta": "8246625119345375174, 6, 9"}
-
-const userInput = ["sit on the fence"]; //current implementation only works if idiomatcher matches it to ONE idiom, not multiple 
+const userInput = ["sit on a fence"]; 
 
 //FOR EACH OF THE USER INPUTS
 for(let i = 0; i < userInput.length; i++){
 
     //SET UP DATABASE
     if(i === 0){
-        //set up the idiomatcher database
+        //Set up the Idiomatcher and Pandas Database
         console.log(await pythonMain.setup()); 
     }
 
-    //get idiom result back from Idiomatcher
+    //Get idiom result back from Idiomatcher, search idiom in Pandas database
     let result = await pythonMain.searchInputInDatabase(userInput[i]);
     
-    //this result is the part of speech of the idiom, not the definition. edit in build_database -> searchDatabase
+    //This result is the part of speech of the idiom, not the definition. edit in build_database -> searchDatabase
     console.log(result)
-
-    //readResult may be a string containing multiple JSON Object 
-    /** 
-
-    //PARSE IDIOMATCH DATA - ASSUMING WE RECEIVE A STRING, currently only works with one result
-    if(readResult != "[]"){
-        readResult = readResult.replace(/'/g, '"').replace(/\(/g, '"').replace(/\)/g, '"'); 
-        readResult = readResult.substring(1, readResult.length-1); 
-
-        console.log(readResult); 
-
-        //maybe i need to edit this so that we try multiple versions of an idiom
-        let parsedResult = JSON.parse(readResult);
-        console.log(parsedResult.idiom)
-
-        //SEARCH DATABASE FOR WORD 
-        console.log("Searching pandas for matching idiom..."); 
-        console.log(await pythonMain.searchDatabase(parsedResult.idiom)); 
-
-    }else{
-        console.log("idiom not identified"); 
-        //add some kind of break here?
-    }
-    */
-
 }
 
 
