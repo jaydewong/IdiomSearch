@@ -10,20 +10,45 @@ idiomatch search and return output
 
 import sys
 import spacy
+import threading
 from idiomatch import Idiomatcher
 from build_database import build
+from build_database import search
 
 run_setup = False
 
+#Setup Idiomatcher and Pandas Idiom Database 
 def setup():
     global run_setup
     global nlp
     global idiomatcher
-    nlp = spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
-    idiomatcher = Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
+
+    t1 = threading.Thread(target=setupIdiomatcher)
+    t2 = threading.Thread(target=setupDatabase)
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
+    print("Setup Complete")
     run_setup = True
-    build()
-    return run_setup
+
+def setupIdiomatcher():
+    global nlp 
+    global idiomatcher 
+    
+    nlp= spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
+    idiomatcher= Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
+    print("Idiomatcher complete")
+
+def setupDatabase():
+    build(); 
+
+#Search Pandas database 
+def searchDatabase(query):
+    search(query)
 
 def is_idiom(input):
 

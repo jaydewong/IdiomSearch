@@ -19,6 +19,7 @@ def build():
 
     # pandas attempt
     df = pd.read_json(url, orient="records", lines=True)
+    print("Build complete")
     # print(df.head())
     # print(df.iloc[0])
     # print(df["word"])
@@ -55,3 +56,7 @@ data_json = json.loads(response.read())
 # print the json response
 print(data_json)
 """
+
+if __name__ == '__main__':
+    build()
+    search("rain cats and dogs")

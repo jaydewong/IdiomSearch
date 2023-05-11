@@ -18,11 +18,8 @@ import { python } from "pythonia";
 
 
 
-//access python idiomatch file 
-const searchResult = await python("./main.py");
-
-//access python pandas database
-const buildDatabase = await python("./build_database.py");
+//access main python file 
+const pythonMain = await python("./main.py");
 
 //ISSUE - matches to multiple idioms??
 //const userInput = ["you're gonna have blood on your hands if you do this"]; 
@@ -35,20 +32,13 @@ for(let i = 0; i < userInput.length; i++){
 
     //SET UP DATABASE
     if(i === 0){
-        //NOTE: get these two setups to run at the same time 
-
         //set up the idiomatcher database
-        console.log(await searchResult.setup()); 
-
-        //set up the pandas database 
-        console.log(await buildDatabase.build()); 
-
-        console.log("setup complete"); 
+        console.log(await pythonMain.setup()); 
     }
 
-    //CALL PYTHON API 
+    //CALL PYTHON - CHECK IF INPUT IS AN IDIOM
     const result = async () => {
-        const isIdiom = await searchResult.is_idiom(userInput[i]); 
+        const isIdiom = await pythonMain.is_idiom(userInput[i]); 
       
         return isIdiom; 
     }
@@ -56,21 +46,20 @@ for(let i = 0; i < userInput.length; i++){
     let readResult = await result(); 
     console.log(typeof readResult); 
 
-    //PARSE IDIOMATCH DATA - ASSUMING WE RECEIVE A STRING 
+    //PARSE IDIOMATCH DATA - ASSUMING WE RECEIVE A STRING, currently only works with one result
     if(readResult != "[]"){
         readResult = readResult.replace(/'/g, '"').replace(/\(/g, '"').replace(/\)/g, '"'); 
         readResult = readResult.substring(1, readResult.length-1); 
 
         console.log(readResult); 
 
+        //maybe i need to edit this so that we try multiple versions of an idiom
         let parsedResult = JSON.parse(readResult);
         console.log(parsedResult.idiom)
 
         //SEARCH DATABASE FOR WORD 
         console.log("Searching pandas for matching idiom..."); 
-        console.log(await buildDatabase.search(parsedResult.idiom)); 
-
-
+        console.log(await pythonMain.searchDatabase(parsedResult.idiom)); 
 
     }else{
         console.log("idiom not identified"); 
