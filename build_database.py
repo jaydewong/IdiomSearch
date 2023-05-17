@@ -61,10 +61,8 @@ def searchDatabase(query):
 
             #return the column of parts of speech of that matched idiom
             print(type(possibleMatch.senses))
-            print(possibleMatch.synonyms)
-            print(possibleMatch.examples)
-            print(possibleMatch.glosses)
-            return possibleMatch.pos 
+            return [possibleMatch.pos, possibleMatch.synonyms, 
+                    possibleMatch.examples, possibleMatch.glosses]
             
             #return possibleMatch.senses[4] #tried accessing glosses 
             #print(possibleMatch.iloc[0].pos)
@@ -73,28 +71,6 @@ def searchDatabase(query):
 # senses: examples, synonyms, and glosses (definition); recursive search for synonyms?
 # extract into new column
 # rain cats and dogs -> rain dogs and cats
-
-"""
-# byte -> str -> list attempt
-raw_data = response.read()    # read into bytes
-str_data = str(raw_data)      # convert bytes to str
-
-# separated by '{"pos":'
-print("\\\\n")
-data_list = str_data.split('{"pos":')
-print(len(data_list))
-
-data = []
-with response.read() as f:
-    for line in f:
-        print(line)
-
-# store JSON response from url in data
-data_json = json.loads(response.read())
-
-# print the json response
-print(data_json)
-"""
 
 if __name__ == '__main__':
     buildDatabase()
