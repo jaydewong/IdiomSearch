@@ -13,16 +13,21 @@ def buildIdiomatcher():
 
 def matchIdiom(input):
     doc = nlp(input) # process the sentence with an nlp pipeline
+    idiomList = parseMatchedIdiom(str(idiomatcher.identify(doc)))
 
-    return parseMatchedIdiom(str(idiomatcher.identify(doc)))
+    return idiomList
 
+#returns a valid JSON string
 def parseMatchedIdiom(input):
+    #input comes in as a string not formatted in JSON
 
-    #input comes in as a string 
+    #replace ' with " for proper JSON format 
     input = input.replace("\'", "\"")
-    print("2: " +input)
-    input = input.split("}, {")
-    print(type(input))
+
+    #replace ) or ( with )" and "( for proper JSON format - the tuple of metadata 
+    input = input.replace("(", "\"(")
+    input = input.replace(")", ")\"")
+
     return input
 
 if __name__ == '__main__':
