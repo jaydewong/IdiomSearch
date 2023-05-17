@@ -23,7 +23,7 @@ def buildDatabase():
 
     # synonyms
     senses = df["senses"].where(df["senses"].notna())
-    synonyms = senses.apply(lambda x: (re.findall(r"'synonyms': (\[\{.+\}\])", str(x))))
+    synonyms = senses.apply(lambda x: (re.findall(r"'synonyms': (\[\{.+?\}\])", str(x))))
     synonyms = synonyms.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
     df["synonyms"].fillna(value=synonyms, inplace=True)
 
@@ -31,11 +31,11 @@ def buildDatabase():
     # print(re.findall(r"'synonyms': (\[\{.+\}\])", str(test.iloc[0])))
 
     # examples
-    df["examples"] = senses.apply(lambda x: (re.findall(r"'examples': (\[\{.+\}\])", str(x))))
+    df["examples"] = senses.apply(lambda x: (re.findall(r"'examples': (\[\{.*?\}\])", str(x))))
     df["examples"] = df["examples"].apply(lambda x: x[0] if len(x) > 0 else None)
 
     # glosses
-    df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[\{.+\}\])", str(x))))
+    df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[.*?\])", str(x))))
     df["glosses"] = df["glosses"].apply(lambda x: x[0] if len(x) > 0 else None)
 
     print(df.columns)
@@ -103,5 +103,7 @@ print(data_json)
 
 if __name__ == '__main__':
     buildDatabase()
+    print(df.iloc[0])
+    print(df.iloc[0]["examples"])
     searchDatabase("rain cats and dogs")
     print(df.loc[10])
