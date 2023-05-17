@@ -15,7 +15,7 @@ def buildDatabase():
 
     # store response of URL
     response = urlopen(url)
-    print(type(response))           # 'http.client.HTTPResponse'
+    print(type(response))   # 'http.client.HTTPResponse'
 
 
     # pandas attempt
@@ -102,6 +102,6 @@ print(data_json)
 """
 
 if __name__ == '__main__':
-    build()
-    search("rain cats and dogs")
+    buildDatabase()
+    searchDatabase("rain cats and dogs")
     print(df.loc[10])
