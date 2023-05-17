@@ -14,6 +14,8 @@ import threading
 from idiomatch import Idiomatcher
 from build_database import build
 from build_database import search
+from build_idiomatcher import buildIdiomatcher
+from build_idiomatcher import matchIdiom
 
 run_setup = False
 
@@ -39,7 +41,7 @@ def setupIdiomatcher():
     global nlp 
     global idiomatcher 
     
-    nlp= spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
+    nlp = spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
     idiomatcher= Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
     print("Idiomatcher complete")
 

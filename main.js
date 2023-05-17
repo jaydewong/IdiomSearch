@@ -16,8 +16,6 @@ import { python } from "pythonia";
  * 
  * */
 
-
-
 //access main python file 
 const pythonMain = await python("./main.py");
 
@@ -25,7 +23,7 @@ const pythonMain = await python("./main.py");
 //const userInput = ["you're gonna have blood on your hands if you do this"]; 
 //{"idiom": "have someone going", "span": ""re gon na have", "meta": "18378485065316437412, 1, 5"}, {"idiom": "have someone going", "span": "you "re gon na have", "meta": "18378485065316437412, 0, 5"}, {"idiom": "have blood on one"s hands", "span": "have blood on your hands", "meta": "5930902300252675198, 4, 9"}, {"idiom": "on one"s hands", "span": "on your hands", "meta": "8246625119345375174, 6, 9"}
 
-const userInput = ["on the fence"]; //current implementation only works if idiomatcher matches it to ONE idiom, not multiple 
+const userInput = ["sit on the fence"]; //current implementation only works if idiomatcher matches it to ONE idiom, not multiple 
 
 //FOR EACH OF THE USER INPUTS
 for(let i = 0; i < userInput.length; i++){
@@ -43,8 +41,30 @@ for(let i = 0; i < userInput.length; i++){
         return isIdiom; 
     }
 
+    //get idiomatcher to return the function 
     let readResult = await result(); 
     console.log(typeof readResult); 
+
+    //i think this part can be condensed into just python but i'll do it here for now
+    if(readResult.length == 0){
+        console.log("idiom not identified"); 
+        break; 
+    }else {
+
+        //later thread this so it works faster 
+        for(let j = 0; j < readResult.length; j++){
+
+            console.log(readResult[j]); 
+            let parsedResult = JSON.parse(readResult[j]);
+            console.log(parsedResult.idiom);  
+        }
+    }
+
+
+    
+
+    //readResult may be a string containing multiple JSON Object 
+    /** 
 
     //PARSE IDIOMATCH DATA - ASSUMING WE RECEIVE A STRING, currently only works with one result
     if(readResult != "[]"){
@@ -65,6 +85,7 @@ for(let i = 0; i < userInput.length; i++){
         console.log("idiom not identified"); 
         //add some kind of break here?
     }
+    */
 
 }
 
