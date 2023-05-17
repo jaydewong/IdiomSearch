@@ -13,7 +13,7 @@ import { python } from "pythonia";
 //access main python file 
 const pythonMain = await python("./main.py");
 
-const userInput = ["sit on a fence"]; 
+const userInput = ["sit on the fence"]; 
 
 //FOR EACH OF THE USER INPUTS
 for(let i = 0; i < userInput.length; i++){

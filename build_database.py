@@ -15,8 +15,7 @@ def buildDatabase():
 
     # store response of URL
     response = urlopen(url)
-    print(type(response))   # 'http.client.HTTPResponse'
-
+    # print(type(response))   # 'http.client.HTTPResponse'
 
     # pandas attempt
     df = pd.read_json(url, orient="records", lines=True)
@@ -27,9 +26,6 @@ def buildDatabase():
     synonyms = synonyms.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
     df["synonyms"].fillna(value=synonyms, inplace=True)
 
-    # print(str(test.iloc[8481]))
-    # print(re.findall(r"'synonyms': (\[\{.+\}\])", str(test.iloc[0])))
-
     # examples
     df["examples"] = senses.apply(lambda x: (re.findall(r"'examples': (\[\{.*?\}\])", str(x))))
     df["examples"] = df["examples"].apply(lambda x: x[0] if len(x) > 0 else None)
@@ -38,12 +34,8 @@ def buildDatabase():
     df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[.*?\])", str(x))))
     df["glosses"] = df["glosses"].apply(lambda x: x[0] if len(x) > 0 else None)
 
-    print(df.columns)
-
     print("Build complete")
-    # print(df.head())
-    # print(df.iloc[0])
-    # print(df["word"])
+
 
 def searchDatabase(query):
     #query as input is a list of dictionaries formatted as a JSON string
@@ -69,6 +61,9 @@ def searchDatabase(query):
 
             #return the column of parts of speech of that matched idiom
             print(type(possibleMatch.senses))
+            print(possibleMatch.synonyms)
+            print(possibleMatch.examples)
+            print(possibleMatch.glosses)
             return possibleMatch.pos 
             
             #return possibleMatch.senses[4] #tried accessing glosses 
