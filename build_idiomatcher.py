@@ -1,30 +1,34 @@
 from idiomatch import Idiomatcher
 import spacy
 
-#finish building this later
-
+#Load patterns from idiomatcher into a database
+#Idiom matcher needs an nlp pipeline - currently supports en_core_web_sm only.
+#Takes approximately 50 seconds to complete 
 def buildIdiomatcher():
     global nlp
     global idiomatcher
 
-    nlp = spacy.load("en_core_web_sm")  # idiom matcher needs an nlp pipeline; Currently supports en_core_web_sm only.
-    idiomatcher = Idiomatcher.from_pretrained(nlp)  # this will take approx 50 seconds.
-    print("Idiomatcher complete")
+    nlp = spacy.load("en_core_web_sm") 
+    idiomatcher = Idiomatcher.from_pretrained(nlp) 
+    print("Idiomatcher patterns have been loaded.")
 
+#Takes in a phrase and returns a list of possible idiom matches for that phrase. 
 def matchIdiom(input):
-    doc = nlp(input) # process the sentence with an nlp pipeline
+
+    #Process the phrase with an nlp pipeline
+    doc = nlp(input) 
     idiomList = parseMatchedIdiom(str(idiomatcher.identify(doc)))
 
     return idiomList
 
-#returns a valid JSON string
+#Takes in the raw result of a matched idiom and formats it into a JSON string
 def parseMatchedIdiom(input):
-    #input comes in as a string not formatted in JSON
 
     #replace ' with " for proper JSON format 
     input = input.replace("\'", "\"")
 
-    #replace ) or ( with )" and "( for proper JSON format - the tuple of metadata 
+    #replace ) or ( with )" and "( for proper JSON format 
+    #allows the original tuple for metadata to be read as a string
     input = input.replace("(", "\"(")
     input = input.replace(")", ")\"")
 

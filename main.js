@@ -1,35 +1,25 @@
-//"use strict";
-//creating a basic project - testing out how to write and compile typescript 
-// Object.defineProperty(exports, "__esModule", { value: true });
-// exports.idiom_detect = void 0;
-// const idiom = 'the world is my oyster';
-// function idiom_detect(who = idiom) {
-//     return "This is an idiom";
-// }
-// exports.idiom_detect = idiom_detect;
 import { python } from "pythonia"; 
 
-
-//access main python file 
+//Access main.py - Matches the idioms and finds the definition and examples 
 const pythonMain = await python("./main.py");
 
+//Input a list of phrases to try to match as an idiom - will eventually be replaced 
+//with input from the browser and the user's selection 
 const userInput = ["sit on the fence"]; 
 
-//FOR EACH OF THE USER INPUTS
+//For each of the user inputs, match it to an idiom if possible and find the definition and examples
 for(let i = 0; i < userInput.length; i++){
 
-    //SET UP DATABASE
+    //Set up databases on the first user input - idiom matching patterns and definitions 
     if(i === 0){
-        //Set up the Idiomatcher and Pandas Database
         console.log(await pythonMain.setup()); 
     }
 
-    //Get idiom result back from Idiomatcher, search idiom in Pandas database
+    //Match and search for idiom definition if it exists 
     let result = await pythonMain.searchInputInDatabase(userInput[i]);
     
-    //This result is the part of speech of the idiom, not the definition. edit in build_database -> searchDatabase
-    console.log(result)
+    console.log("Result of idiom matching: " + result)
 }
 
-
+//Exit call to main.py 
 python.exit(); 
