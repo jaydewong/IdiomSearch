@@ -43,7 +43,7 @@ def searchInputInDatabase(input):
 
     #get and parse an Idiomatcher match if it exists 
     idiomList = matchIdiom(input)
-    print("The list of idioms is: " + idiomList)
+    #print("The list of idioms is: " + idiomList)
     
     #search idiomList in Pandas database - currently returns part of speech
     print("Printing examples of matched idioms...")

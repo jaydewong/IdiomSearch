@@ -16,10 +16,39 @@ for(let i = 0; i < userInput.length; i++){
     }
 
     //Match and search for idiom definition if it exists 
-    let result = await pythonMain.searchInputInDatabase(userInput[i]);
+
     
-    console.log("Result of idiom matching: " + result)
+    // const getIdiom = () => pythonMain.searchInputInDatabase(userInput[i])
+    // getIdiom().then((result) => {
+    //     console.log(result.length); 
+    // })
+    let result = await pythonMain.searchInputInDatabase(userInput[i]);
+    console.log(result); 
+    
+    //Result is always a list of 4 elements 
+    //1. POS 2. Synonyms 3. Examples 4. Definition 
+    // for(let j = 0; j < result.length; j++){
+    //     switch (j){
+    //         case 0: 
+    //             console.log("Part of speech: " + result[j]);
+    //             break; 
+    //         case 1: 
+    //             console.log("Synonyms: " + result[j]);
+    //             break; 
+    //         case 2: 
+    //             console.log("Examples: " + result[j]);
+    //             break;
+    //         case 3: 
+    //             console.log("Definition: " + result[j]);
+    //             break;
+    //         default: 
+    //             console.log("No result."); 
+    //     }
+
+    // }
+    //console.log(result); 
 }
 
 //Exit call to main.py 
 python.exit(); 
+

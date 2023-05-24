@@ -34,7 +34,7 @@ def buildDatabase():
     df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[.*?\])", str(x))))
     df["glosses"] = df["glosses"].apply(lambda x: x[0] if len(x) > 0 else None)
 
-    print("Build complete")
+    print("Build definition database complete")
 
 
 def searchDatabase(query):
@@ -57,16 +57,12 @@ def searchDatabase(query):
         if possibleMatch.empty == True:
             continue
         else: 
-            print(possibleMatch)
+            #print(possibleMatch)
 
-            #return the column of parts of speech of that matched idiom
-            print(type(possibleMatch.senses))
             return [possibleMatch.pos, possibleMatch.synonyms, 
-                    possibleMatch.examples, possibleMatch.glosses]
+                      possibleMatch.examples, possibleMatch.glosses]
             
             #return possibleMatch.senses[4] #tried accessing glosses 
-            #print(possibleMatch.iloc[0].pos)
-
 
 # senses: examples, synonyms, and glosses (definition); recursive search for synonyms?
 # extract into new column
