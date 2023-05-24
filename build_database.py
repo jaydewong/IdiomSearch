@@ -72,6 +72,14 @@ def searchDatabase(query):
 # extract into new column
 # rain cats and dogs -> rain dogs and cats
 
+# blend (?) alternative forms
+    # rain cats and dogs | rain dogs and cats
+    # have another thing coming | have another think coming
+    # ass-backwards
+    # cut a swath | cut a wide swath
+# glosses -> alternative forms -> df[alternative forms -> combine rows -> search alternative forms
+
+
 if __name__ == '__main__':
     buildDatabase()
     print(df.iloc[0])

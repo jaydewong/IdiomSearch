@@ -2,7 +2,9 @@
 
 main.js: testing using typescript and python together; process user input to extract idiom
 main.py: idiomatch setup and user input
-build_database.py: pull json file of idiom definitions and convert to Pandas dataframe
+build_database.py: 
+    - buildDatabase(): pull json file of idiom definitions and convert to Pandas dataframe
+    - searchDatabase(query): search database for query of idioms and return structured output 
 
 Install Typescript: npm i typescript --save-dev
 Install JSPyBridge: npm install pythonia
