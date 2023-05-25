@@ -8,6 +8,8 @@ def buildIdiomatcher():
     global nlp
     global idiomatcher
 
+    print("inside idiomatcher")
+
     nlp = spacy.load("en_core_web_sm") 
     idiomatcher = Idiomatcher.from_pretrained(nlp) 
     print("Idiomatcher patterns have been loaded.")
@@ -25,7 +27,10 @@ def matchIdiom(input):
 def parseMatchedIdiom(input):
 
     #replace ' with " for proper JSON format 
-    input = input.replace("\'", "\"")
+    input = input.replace("{\'", "{\"") #handle {'
+    input = input.replace("\':", "\":") #handle ':
+    input = input.replace(" \'", " \"") #handle space'
+    input = input.replace("\',", "\",") #handle ',
 
     #replace ) or ( with )" and "( for proper JSON format 
     #allows the original tuple for metadata to be read as a string

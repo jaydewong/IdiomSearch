@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import threading
 
 # import urllib library
 from urllib.request import urlopen
@@ -15,32 +16,49 @@ def buildDatabase():
 
     # store response of URL
     response = urlopen(url)
-    # print(type(response))   # 'http.client.HTTPResponse'
+    print(type(response))   # 'http.client.HTTPResponse'
 
-    # pandas attempt
+
+    # pandas attempt- this part takes a ridiculous amount of time sometimes 
     df = pd.read_json(url, orient="records", lines=True)
+    print("pandas attempt done")
 
-    # synonyms
     senses = df["senses"].where(df["senses"].notna())
+
+    splitSynonyms(senses)
+    splitExamples(senses)
+    splitGlosses(senses)
+
+    print("Build definition database complete")
+
+
+def splitSynonyms(senses):
+    global df 
+
     synonyms = senses.apply(lambda x: (re.findall(r"'synonyms': (\[\{.+?\}\])", str(x))))
     synonyms = synonyms.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
     df["synonyms"].fillna(value=synonyms, inplace=True)
 
-    # examples
+def splitExamples(senses):
+    global df 
+
+     # examples
     df["examples"] = senses.apply(lambda x: (re.findall(r"'examples': (\[\{.*?\}\])", str(x))))
     df["examples"] = df["examples"].apply(lambda x: x[0] if len(x) > 0 else None)
 
-    # glosses
+def splitGlosses(senses):
+    global df 
+
     df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[.*?\])", str(x))))
     df["glosses"] = df["glosses"].apply(lambda x: x[0] if len(x) > 0 else None)
 
-    print("Build definition database complete")
 
 
 def searchDatabase(query):
     #query as input is a list of dictionaries formatted as a JSON string
 
     #Load a list of queries to check in Pandas
+    print(query)
     query = json.loads(query)
     queryDf = [item['idiom'] for item in query]
     
@@ -80,5 +98,5 @@ if __name__ == '__main__':
     buildDatabase()
     print(df.iloc[0])
     print(df.iloc[0]["examples"])
-    searchDatabase("rain cats and dogs")
-    print(df.loc[10])
+    #searchDatabase("rain cats and dogs") <- can't do this it expects JSON input
+    #print(df.loc[10])

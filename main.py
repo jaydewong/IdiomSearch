@@ -26,8 +26,12 @@ def setup():
     global nlp
     global idiomatcher
 
+    print("inside setup")
+
     t1 = threading.Thread(target=buildIdiomatcher)
     t2 = threading.Thread(target=buildDatabase)
+
+    print("created threads")
 
     t1.start()
     t2.start()
@@ -45,7 +49,6 @@ def searchInputInDatabase(input):
     idiomList = matchIdiom(input)
     #print("The list of idioms is: " + idiomList)
     
-    #search idiomList in Pandas database - currently returns part of speech
     print("Printing examples of matched idioms...")
     result = searchDatabase(idiomList)
     return result
