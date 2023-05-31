@@ -6,6 +6,9 @@ from urllib.request import urlopen
 
 # import json
 import json
+
+import threading
+
 # store the URL in url as parameter for urlopen
 url = "https://kaikki.org/dictionary/English/tag/tagged-idiomatic/kaikki_dot_org-dictionary-English-tagged-idiomatic.json"
 
@@ -18,23 +21,46 @@ def buildDatabase():
     # print(type(response))   # 'http.client.HTTPResponse'
 
     # pandas attempt
-    df = pd.read_json(url, orient="records", lines=True)
+    keepCols = ["word", "pos", "senses", "synonyms", "antonyms", "translations"]
+    df = pd.read_json(url, orient="records", lines=True).loc[:, keepCols]
 
-    # synonyms
+    # parallelize column builds
+    t1 = threading.Thread(target=extractExamples)
+    t2 = threading.Thread(target=extractSynonyms)
+    t3 = threading.Thread(target=extractGlosses)
+
+    t1.start()
+    t2.start()
+    t3.start()
+
+    t1.join()
+    t2.join()
+    t3.join()
+    
+    # alternative forms
+    df["alternative form"] = None
+    alts = df.where(df["glosses"].str.contains("Alternative form of"))
+    alts["alternative form"] = alts["glosses"].apply(lambda x: (re.search(r"Alternative form of (.+?)\.*'\]", str(x))))
+    alts["alternative form"] = alts["alternative form"].apply(lambda x: x.group(0) if x is not None else None)
+
+    print("Build definition database complete")
+
+
+def extractSynonyms():
     senses = df["senses"].where(df["senses"].notna())
     synonyms = senses.apply(lambda x: (re.findall(r"'synonyms': (\[\{.+?\}\])", str(x))))
     synonyms = synonyms.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
     df["synonyms"].fillna(value=synonyms, inplace=True)
 
-    # examples
+def extractExamples():
+    senses = df["senses"].where(df["senses"].notna())
     df["examples"] = senses.apply(lambda x: (re.findall(r"'examples': (\[\{.*?\}\])", str(x))))
     df["examples"] = df["examples"].apply(lambda x: x[0] if len(x) > 0 else None)
 
-    # glosses
+def extractGlosses():
+    senses = df["senses"].where(df["senses"].notna())
     df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[.*?\])", str(x))))
     df["glosses"] = df["glosses"].apply(lambda x: x[0] if len(x) > 0 else None)
-
-    print("Build definition database complete")
 
 
 def searchDatabase(query):
@@ -79,6 +105,5 @@ def searchDatabase(query):
 if __name__ == '__main__':
     buildDatabase()
     print(df.iloc[0])
-    print(df.iloc[0]["examples"])
-    searchDatabase("rain cats and dogs")
     print(df.loc[10])
+    print(df.columns)
