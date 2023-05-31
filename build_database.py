@@ -59,23 +59,6 @@ def buildDatabase():
     df["examples"] = df.apply(lambda z: mergeCols(z["examples_x"], z["examples_y"]), axis=1)
     df = df.drop(columns=["synonyms_x", "synonyms_y", "examples_x", "examples_y"])
 
-
-    """
-    originals = isAlt["alternative form"].to_list()
-    hasAlt = df.where(df["word"].isin(originals)).dropna(subset="word")     # idioms that have an alternative form
-    print(isAlt.index)
-    print(hasAlt.index)
-
-    - isAlt
-        - rename index to original idioms
-        - keep word, syn, ex cols
-        - rename "word" col to "alt form"
-    - df
-        - drop rows that have alt form
-    - left merge df and isAlt on index
-    - combine syn and ex cols 
-    """
-
     print("Build definition database complete")
 
 
