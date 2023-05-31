@@ -9,6 +9,7 @@ idiomatch search and return output
 """
 
 import json
+import re
 import sys
 import spacy
 import threading
@@ -48,9 +49,40 @@ def searchInputInDatabase(input):
     #get and parse an Idiomatcher match if it exists 
     idiomList = matchIdiom(input)
     #print("The list of idioms is: " + idiomList)
+    #print(idiomList)
+
+    if str(idiomList) == '[]':
+        return "No idiom found."
+    else:
+         #print("Printing examples of matched idioms...")
+        foundIdiom, result = searchDatabase(idiomList)
+
+        if(foundIdiom == None):
+            return "No definition found."
+        else:
+            parsedResult = parseResult(foundIdiom, result)
+            #print(parsedResult)
+            return parsedResult    
     
-    print("Printing examples of matched idioms...")
-    result = searchDatabase(idiomList)
+
+def parseResult(idiom, input):
+
+    #The string of examples 
+    s = str(input[2].iloc[0])
+
+    #Parse examples into just one 
+    string = s[s.find('text: ')+10:s.find('\', ')+1]
+
+    if string == "":
+        string = "N/A"
+
+    #Return result, cleaned up 
+    result = "Idiom: " + idiom + "\n" \
+        "Part of speech: " + input[0].iloc[0] + "\n" + \
+        "Definition: " + input[3].iloc[0] + "\n" + \
+        "Example: " + string 
+    
+
     return result
 
 #Testing functions with console input 
