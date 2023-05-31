@@ -1,5 +1,6 @@
 import pandas as pd
 import re
+import threading
 
 # import urllib library
 from urllib.request import urlopen
@@ -20,14 +21,20 @@ def buildDatabase():
     response = urlopen(url)
     # print(type(response))   # 'http.client.HTTPResponse'
 
+
     # pandas attempt
     keepCols = ["word", "pos", "senses", "synonyms", "antonyms", "translations"]
     df = pd.read_json(url, orient="records", lines=True).loc[:, keepCols]
 
     # parallelize column builds
-    t1 = threading.Thread(target=extractExamples)
-    t2 = threading.Thread(target=extractSynonyms)
-    t3 = threading.Thread(target=extractGlosses)
+    senses = df["senses"].where(df["senses"].notna())
+    synonymsPat = r"'synonyms': (\[\{.+?\}\])"
+    examplesPat = r"'examples': (\[\{.*?\}\])"
+    glossesPat = r"'glosses': (\[.*?\])"
+
+    t1 = threading.Thread(target=extractExistingCol(senses, "synonyms", synonymsPat))
+    t2 = threading.Thread(target=extractNewCol(senses, "examples", examplesPat))
+    t3 = threading.Thread(target=extractNewCol(senses, "glosses", glossesPat))
 
     t1.start()
     t2.start()
@@ -46,27 +53,22 @@ def buildDatabase():
     print("Build definition database complete")
 
 
-def extractSynonyms():
-    senses = df["senses"].where(df["senses"].notna())
-    synonyms = senses.apply(lambda x: (re.findall(r"'synonyms': (\[\{.+?\}\])", str(x))))
-    synonyms = synonyms.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
-    df["synonyms"].fillna(value=synonyms, inplace=True)
+def extractExistingCol(senses, colName, colPattern):
+    series = senses.apply(lambda x: (re.findall(colPattern, str(x))))
+    series = series.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
+    df[colName].fillna(value=series, inplace=True)
 
-def extractExamples():
-    senses = df["senses"].where(df["senses"].notna())
-    df["examples"] = senses.apply(lambda x: (re.findall(r"'examples': (\[\{.*?\}\])", str(x))))
-    df["examples"] = df["examples"].apply(lambda x: x[0] if len(x) > 0 else None)
+def extractNewCol(senses, colName, colPattern):
+    df[colName] = senses.apply(lambda x: (re.findall(colPattern, str(x))))
+    df[colName] = df[colName].apply(lambda x: x[0] if len(x) > 0 else None)
 
-def extractGlosses():
-    senses = df["senses"].where(df["senses"].notna())
-    df["glosses"] = senses.apply(lambda x: (re.findall(r"'glosses': (\[.*?\])", str(x))))
-    df["glosses"] = df["glosses"].apply(lambda x: x[0] if len(x) > 0 else None)
 
 
 def searchDatabase(query):
     #query as input is a list of dictionaries formatted as a JSON string
 
     #Load a list of queries to check in Pandas
+    print(query)
     query = json.loads(query)
     queryDf = [item['idiom'] for item in query]
     
