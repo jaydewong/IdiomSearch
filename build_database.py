@@ -94,12 +94,12 @@ def searchDatabase(query):
     #query as input is a list of dictionaries formatted as a JSON string
 
     #Load a list of queries to check in Pandas
-    print(query)
+    #print(query)
     query = json.loads(query)
     queryDf = [item['idiom'] for item in query]
     
     #Print the list of found matched idioms from Idiomatcher
-    print(queryDf)
+    #print(queryDf)
 
     #Check queries in Pandas database 
     #For each query in queryDf
@@ -113,11 +113,24 @@ def searchDatabase(query):
         else: 
             #print(possibleMatch)
 
-            return [possibleMatch.pos, possibleMatch.synonyms, 
+            return q, [possibleMatch.pos, possibleMatch.synonyms, 
                       possibleMatch.examples, possibleMatch.glosses]
             
             #return possibleMatch.senses[4] #tried accessing glosses 
 
+    #If we reach here, no match was found
+    return None, None
+
+# senses: examples, synonyms, and glosses (definition); recursive search for synonyms?
+# extract into new column
+# rain cats and dogs -> rain dogs and cats
+
+# blend (?) alternative forms
+    # rain cats and dogs | rain dogs and cats
+    # have another thing coming | have another think coming
+    # ass-backwards
+    # cut a swath | cut a wide swath
+# glosses -> alternative forms -> df[alternative forms -> combine rows -> search alternative forms
 
 
 if __name__ == '__main__':
