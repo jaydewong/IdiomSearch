@@ -8,8 +8,6 @@ from urllib.request import urlopen
 # import json
 import json
 
-import threading
-
 # store the URL in url as parameter for urlopen
 url = "https://kaikki.org/dictionary/English/tag/tagged-idiomatic/kaikki_dot_org-dictionary-English-tagged-idiomatic.json"
 
@@ -17,20 +15,15 @@ url = "https://kaikki.org/dictionary/English/tag/tagged-idiomatic/kaikki_dot_org
 def buildDatabase():
     global df
 
-    # store response of URL
-    response = urlopen(url)
-    # print(type(response))   # 'http.client.HTTPResponse'
-
-
     # pandas attempt
-    keepCols = ["word", "pos", "senses", "synonyms", "antonyms", "translations"]
-    df = pd.read_json(url, orient="records", lines=True).loc[:, keepCols]
+    dfKeepCols = ["word", "pos", "senses", "synonyms", "antonyms", "translations"]
+    df = pd.read_json(url, orient="records", lines=True).loc[:, dfKeepCols]
 
     # parallelize column builds
-    senses = df["senses"].where(df["senses"].notna())
-    synonymsPat = r"'synonyms': (\[\{.+?\}\])"
-    examplesPat = r"'examples': (\[\{.*?\}\])"
-    glossesPat = r"'glosses': (\[.*?\])"
+    senses = df["senses"]
+    synonymsPat = r"'synonyms': \[(\{.+?\})\]"
+    examplesPat = r"'examples': \[(\{.*?\})\]"
+    glossesPat = r"'glosses': \[(.*?)\]"
 
     t1 = threading.Thread(target=extractExistingCol(senses, "synonyms", synonymsPat))
     t2 = threading.Thread(target=extractNewCol(senses, "examples", examplesPat))
@@ -45,22 +38,55 @@ def buildDatabase():
     t3.join()
     
     # alternative forms
-    df["alternative form"] = None
-    alts = df.where(df["glosses"].str.contains("Alternative form of"))
-    alts["alternative form"] = alts["glosses"].apply(lambda x: (re.search(r"Alternative form of (.+?)\.*'\]", str(x))))
-    alts["alternative form"] = alts["alternative form"].apply(lambda x: x.group(0) if x is not None else None)
+    alts = df["glosses"].where(df["glosses"].str.contains("Alternative form of"))
+    altsPat = r"Alternative form of (.+?)\.*'"
+    extractNewCol(alts, "alternative form", altsPat)
+
+    df = df.set_index(keys="word", drop=False)
+
+    # merge alternative forms
+    altKeepCols = ["word", "synonyms", "examples", "alternative form"]
+    isAlt = df.loc[:, altKeepCols].dropna(subset="alternative form")    # idioms that are an alternative form
+    alternates = isAlt["word"].to_list()
+    isAlt = isAlt.set_index("alternative form").rename(columns={"word": "alternative form"})
+
+    df = df.drop(columns="alternative form").drop(index=alternates)
+    df = df.merge(isAlt, how="left", left_index=True, right_index=True)
+    mergeCols = (lambda x, y: "[" + x + ", " + y + "]" if (type(x) is str and type(y) is str) 
+                                else ("[" + x + "]" if type(x) is str 
+                                      else ("[" + y + "]") if type(y) is str else y))
+    df["synonyms"] = df.apply(lambda z: mergeCols(z["synonyms_x"], z["synonyms_y"]), axis=1)
+    df["examples"] = df.apply(lambda z: mergeCols(z["examples_x"], z["examples_y"]), axis=1)
+    df = df.drop(columns=["synonyms_x", "synonyms_y", "examples_x", "examples_y"])
+
+
+    """
+    originals = isAlt["alternative form"].to_list()
+    hasAlt = df.where(df["word"].isin(originals)).dropna(subset="word")     # idioms that have an alternative form
+    print(isAlt.index)
+    print(hasAlt.index)
+
+    - isAlt
+        - rename index to original idioms
+        - keep word, syn, ex cols
+        - rename "word" col to "alt form"
+    - df
+        - drop rows that have alt form
+    - left merge df and isAlt on index
+    - combine syn and ex cols 
+    """
 
     print("Build definition database complete")
 
 
-def extractExistingCol(senses, colName, colPattern):
-    series = senses.apply(lambda x: (re.findall(colPattern, str(x))))
-    series = series.apply(lambda x: x[0] if len(x) > 0 else None).dropna()
+def extractExistingCol(source, colName, colPattern):
+    series = source.apply(lambda x: (re.search(colPattern, str(x))))
+    series = series.apply(lambda x: x.group(1) if x else float("nan")).dropna()
     df[colName].fillna(value=series, inplace=True)
 
-def extractNewCol(senses, colName, colPattern):
-    df[colName] = senses.apply(lambda x: (re.findall(colPattern, str(x))))
-    df[colName] = df[colName].apply(lambda x: x[0] if len(x) > 0 else None)
+def extractNewCol(source, colName, colPattern):
+    df[colName] = source.apply(lambda x: (re.search(colPattern, str(x))))
+    df[colName] = df[colName].apply(lambda x: x.group(1) if x else float("nan"))
 
 
 
@@ -92,20 +118,19 @@ def searchDatabase(query):
             
             #return possibleMatch.senses[4] #tried accessing glosses 
 
-# senses: examples, synonyms, and glosses (definition); recursive search for synonyms?
-# extract into new column
-# rain cats and dogs -> rain dogs and cats
-
-# blend (?) alternative forms
-    # rain cats and dogs | rain dogs and cats
-    # have another thing coming | have another think coming
-    # ass-backwards
-    # cut a swath | cut a wide swath
-# glosses -> alternative forms -> df[alternative forms -> combine rows -> search alternative forms
 
 
 if __name__ == '__main__':
     buildDatabase()
-    print(df.iloc[0])
-    print(df.loc[10])
-    print(df.columns)
+    # print(df.iloc[0])
+    # print(df.iloc[10])
+    # print(df.columns)
+    #print(df.head(3))
+    print(df.loc["rain cats and dogs"])
+    # print(df[df["word"].str.contains("and")].dropna(subset="word"))
+
+    """
+    next to do: 
+        - filter out "see citations"
+        - suffix functionality
+    """
