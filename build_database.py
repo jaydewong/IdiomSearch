@@ -104,16 +104,6 @@ def searchDatabase(query):
     #If we reach here, no match was found
     return None, None
 
-# senses: examples, synonyms, and glosses (definition); recursive search for synonyms?
-# extract into new column
-# rain cats and dogs -> rain dogs and cats
-
-# blend (?) alternative forms
-    # rain cats and dogs | rain dogs and cats
-    # have another thing coming | have another think coming
-    # ass-backwards
-    # cut a swath | cut a wide swath
-# glosses -> alternative forms -> df[alternative forms -> combine rows -> search alternative forms
 
 
 if __name__ == '__main__':
@@ -123,10 +113,11 @@ if __name__ == '__main__':
     # print(df.columns)
     #print(df.head(3))
     print(df.loc["rain cats and dogs"])
+    print(df.loc["cut a wide swath"])
     # print(df[df["word"].str.contains("and")].dropna(subset="word"))
 
     """
     next to do: 
-        - filter out "see citations"
+        - filter out "see citations" in examples
         - suffix functionality
     """
