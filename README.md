@@ -1,28 +1,12 @@
 # IdiomSearch
 
-main.js: testing using typescript and python together; process user input to extract idiom
-main.py: idiomatch setup and user input
-build_database.py: 
-    - buildDatabase(): pull json file of idiom definitions and convert to Pandas dataframe
-    - searchDatabase(query): search database for query of idioms and return structured output 
+Given a phrase, IdiomSearch will identify an idiom if it exists in the phrase using Kim Eunbin's Idiomatch. If an idiom is identified, IdiomSearch will parse Wiktextract's idiom dictionary and output the idiom's part of speech, definition, and examples 
 
-Install Typescript: npm i typescript --save-dev
-Install JSPyBridge: npm install pythonia
-Install Idiomatch: pip3 install idiomatch
-Install Spacey: python3 -m spacy download en_core_web_sm
-Install Pandas: pip3 install pandas
+To run the program: 
+Run 'node main.js' from console to run the program with the given input in main.js
+Run 'python3 main.python' from console to add your own inputs. 
 
-Compile TS: npm run compile 
-Run Single JS file: node main-jayde.js
-
-If you run into an issue pushing to git because a stream wasn't closed cleanly, 
-try git config http.postBuffer 524288000 and push again. 
-
-Notes: 
-- BridgeException occurs since py file isn't returning anything to JS, as we're 
-staying in a while loop. Need to fix, but if we call py file once for each word 
-we search up, we have to initialize Idiomatcher every time and it takes too long
-
+Currently this program can only be run from console, but a browser interface is in progress. 
 
 Citations:
 
