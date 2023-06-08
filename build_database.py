@@ -36,7 +36,7 @@ def buildDatabase():
     t1.join()
     t2.join()
     t3.join()
-    
+
     # alternative forms
     alts = df["glosses"].where(df["glosses"].str.contains("Alternative form of"))
     altsPat = r"Alternative form of (.+?)\.*'"
@@ -59,6 +59,10 @@ def buildDatabase():
     df["examples"] = df.apply(lambda z: mergeCols(z["examples_x"], z["examples_y"]), axis=1)
     df = df.drop(columns=["synonyms_x", "synonyms_y", "examples_x", "examples_y"])
 
+    # filter examples
+    filterPat = re.compile(r"\{'text': 'For quotations .+?'\}[, \}]?")
+    df["examples"] = [filterPat.sub("", x) if type(x) == str else x for x in df["examples"]]
+    
     print("Build definition database complete")
 
 
@@ -108,16 +112,5 @@ def searchDatabase(query):
 
 if __name__ == '__main__':
     buildDatabase()
-    # print(df.iloc[0])
-    # print(df.iloc[10])
-    # print(df.columns)
-    #print(df.head(3))
     print(df.loc["rain cats and dogs"])
     print(df.loc["cut a wide swath"])
-    # print(df[df["word"].str.contains("and")].dropna(subset="word"))
-
-    """
-    next to do: 
-        - filter out "see citations" in examples
-        - suffix functionality
-    """
